@@ -16,7 +16,7 @@ class HomeViewModel : ViewModel() {
     fun fetchData() {
         viewModelScope.launch {
             val result = repository.fetchData()
-            _data.value = result!!
+//            _data.value = result!!
         }
     }
 }

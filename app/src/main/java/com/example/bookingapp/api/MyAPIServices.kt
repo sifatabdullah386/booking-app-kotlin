@@ -11,6 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface MyAPIServices {
 
@@ -18,5 +19,5 @@ interface MyAPIServices {
     fun createLogin(@Body body: JsonObject): Call<JsonObject>
 
     @GET("rooms_ratings/roominfolist?is_dep=1")
-    suspend fun getRoomList(@Header("Authorization") accessToken: String?): Response<ArrayList<RoomItems>>
+    suspend fun getRoomList(@Header("Authorization") accessToken: String?): Call<ArrayList<RoomItems>>
 }

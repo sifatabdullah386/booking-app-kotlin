@@ -1,6 +1,5 @@
 package com.example.bookingapp.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -14,7 +13,8 @@ interface UserDao {
     suspend fun getAll(): List<Users>
 
     @Insert
-    suspend fun insertAll(users: List<Users>)
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(users: Users)
 
     @Update
     suspend fun updateAll(users: List<Users>)
@@ -24,7 +24,4 @@ interface UserDao {
 
     @Query("delete from users")
     suspend fun deleteAllUsers()
-
-    @Query("select * from users order by itemId desc")
-    suspend fun getAllUsers(): LiveData<List<Users>>
 }

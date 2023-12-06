@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id ("kotlin-kapt")
+    id ("com.google.dagger.hilt.android")
 }
 
 //apply() plugin: 'kotlin-kapt'
@@ -29,11 +31,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         viewBinding = true
@@ -77,6 +84,11 @@ dependencies {
 //    //chart
 //    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    //Dagger - Hilt
+    implementation ("com.google.dagger:hilt-android:2.46.1")
+    kapt ("com.google.dagger:hilt-android-compiler:2.46.1")
+    kapt ("androidx.hilt:hilt-compiler:1.0.0")
+
     // define any required OkHttp artifacts without version
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
@@ -93,12 +105,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
 
-    // Hilt
-//    implementation ("com.google.dagger:hilt-android:$hilt_version")
-//    kapt ("com.google.dagger:hilt-compiler:$hilt_version")
-
     // Moshi
-//    kapt ("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
+    kapt ("com.squareup.moshi:moshi-kotlin-codegen:1.14.0")
     implementation("com.squareup.moshi:moshi:1.14.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.14.0")
     implementation("com.squareup.moshi:moshi-adapters:1.14.0")
@@ -106,6 +114,6 @@ dependencies {
 
     //Room Database
     implementation ("androidx.room:room-runtime:2.5.2")
-//    Ksp("androidx.room:room-compiler:2.5.2")
+    kapt ("androidx.room:room-compiler:2.5.2")
+    implementation ("androidx.room:room-ktx:2.5.2")
 }
-

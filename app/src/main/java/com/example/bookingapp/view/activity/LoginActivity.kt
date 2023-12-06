@@ -10,16 +10,26 @@ import android.widget.Toast
 import com.example.bookingapp.R
 import com.example.bookingapp.api.MyAPIServices
 import com.example.bookingapp.api.RetrofitClientInstance.getRetrofitInstance
+import com.example.bookingapp.database.UserDatabase
+import com.example.bookingapp.database.Users
 import com.google.gson.JsonObject
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 
+@Suppress("NAME_SHADOWING")
 class LoginActivity : BaseActivity() {
-
+    private lateinit var userDb: UserDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        userDb = UserDatabase.getDatabase(this)
 
         val btnLogin = findViewById<TextView>(R.id.btn_submit) as TextView
         val username = findViewById<EditText>(R.id.username) as EditText
@@ -40,7 +50,8 @@ class LoginActivity : BaseActivity() {
         return user.isNotEmpty() && pass.isNotEmpty()
     }
 
-    private fun accessToLogin(user: String?, pass: String?) {
+    @OptIn(DelicateCoroutinesApi::class)
+    fun accessToLogin(user: String?, pass: String?) {
 //        ShowLoading()
         val paramObject = JsonObject()
         paramObject.addProperty("userid", user)
@@ -62,29 +73,63 @@ class LoginActivity : BaseActivity() {
                 val message = convertJSON.getString("message")
 
                 if (status.equals("200")) {
-                    val accessToken = convertJSON.getString("token")
+                    val token = convertJSON.getJSONObject("token")
+                    val accessToken = token.getString("access_token")
                     Log.d("AccessToken", accessToken)
                     sessionManager!!.setValue("access_token", accessToken)
                     val userData = convertJSON.getJSONObject("user")
-                    Log.d("UserInfo:", userData.toString())
                     val id = userData.getInt("id")
-                    Log.d("userId:", id.toString())
                     val area = userData.getInt("area")
                     val hotelId = userData.getInt("hotel_id")
-                    Log.d("userArea:", area.toString())
-                    sessionManager!!.setValueInt("id", id)
-                    sessionManager!!.setValueInt("area", area)
-                    sessionManager!!.setValueInt("hotel_id", hotelId)
-                    sessionManager!!.setValue("name", userData.getString("name"))
+                    val name = userData.getString("name")
+                    val phone = userData.getString("phone")
+                    val email = userData.getString("email")
+                    val userName = userData.getString("user_name")
+                    val address = userData.getString("address")
+                    val zipcode = userData.getString("zipcode")
+                    val image = userData.getString("image")
+//                  sessionManager!!.setValue("name", userData.getString("name"))
                     sessionManager!!.setLogin(true)
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
-                    finish()
+
+                    GlobalScope.launch(Dispatchers.IO) {
+
+                        val user = Users(
+                            id,
+                            hotelId,
+                            accessToken,
+                            area,
+                            name,
+                            phone,
+                            email,
+                            userName,
+                            address,
+                            zipcode,
+                            image
+                        )
+
+                        userDb.userDao().deleteAllUsers()
+
+//                        if (userDb.userDao().getAll().isNotEmpty()) {
+                        userDb.userDao().insertAll(user)
+//                        } else {
+//                            userDb.userDao().deleteAllUsers()
+//                        }
+
+                        // Retrieve users
+                        val users = userDb.userDao().getAll()
+
+                        Log.d("AllUsers", users.toString())
+
+                        withContext(Dispatchers.Main) {
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            Toast.makeText(this@LoginActivity, message, Toast.LENGTH_LONG).show()
+                            finish()
+                        }
+                    }
                 } else {
                     HideLoading()
                     ShowAlert(message)
                 }
-
             }
 
             override fun onFailure(call: Call<JsonObject>, t: Throwable) {

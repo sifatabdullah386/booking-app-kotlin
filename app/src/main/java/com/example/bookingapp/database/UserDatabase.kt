@@ -1,41 +1,36 @@
 package com.example.bookingapp.database
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Users::class], version = 1)
+@Database(
+    entities = [Users::class], version = UserDatabase.DBVERSION
+//    autoMigrations = [AutoMigration(from = 2, to = 3)]
+)
 abstract class UserDatabase : RoomDatabase() {
-
-    abstract fun UserDao(): UserDao
+    abstract fun userDao(): UserDao
 
     companion object {
-        private var instance: UserDatabase? = null
-
-        fun getInstance(ctx: Context): UserDatabase {
-            if (instance == null)
-                instance = Room.databaseBuilder(ctx.applicationContext, UserDatabase::class.java, "users")
-                        .fallbackToDestructiveMigration()
-                        .addCallback(roomCallback)
-                        .build()
-            return instance!!
-        }
-
-        private val roomCallback = object : Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                suspend {
-                    populateDatabase(instance!!)
-                }
+        @Volatile
+        private var INSTANCE: UserDatabase? = null
+        const val DBVERSION = 2
+        fun getDatabase(context: Context): UserDatabase {
+            val tempInstance = INSTANCE
+            if (tempInstance != null) {
+                return tempInstance
+            }
+            synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    UserDatabase::class.java,
+                    "users"
+                ).fallbackToDestructiveMigration().build()
+                INSTANCE = instance
+                return instance
             }
         }
-
-        private suspend fun populateDatabase(db: UserDatabase) {
-            val userDao = db.UserDao()
-//            userDao.insertAll()
-        }
     }
-
 }
