@@ -28,3 +28,17 @@ data class RoomItems(
     @Json(name = "status_color")
     val statusColor: String,
 )
+
+@JsonClass(generateAdapter = false)
+data class RoomImage(
+    @Json(name = "msg")
+    val msg: String,
+    @Json(name = "uid")
+    val uid: Int,
+    @Json(name = "name")
+    val name: String?,
+    @Json(name = "status")
+    val status: String,
+    @Json(name = "url")
+    val url: String
+)

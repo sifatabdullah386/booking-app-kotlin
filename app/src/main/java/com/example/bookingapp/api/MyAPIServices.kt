@@ -19,5 +19,5 @@ interface MyAPIServices {
     fun createLogin(@Body body: JsonObject): Call<JsonObject>
 
     @GET("rooms_ratings/roominfolist?is_dep=1")
-    suspend fun getRoomList(@Header("Authorization") accessToken: String?): Call<ArrayList<RoomItems>>
+    suspend fun getRoomList(@Header("Authorization") accessToken: String?): ArrayList<RoomItems>
 }

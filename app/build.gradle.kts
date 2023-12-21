@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id ("kotlin-kapt")
     id ("com.google.dagger.hilt.android")
+    id ("kotlin-kapt")
 }
 
 //apply() plugin: 'kotlin-kapt'
@@ -69,32 +69,21 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
-//    //slider dependencies
-//    implementation("com.github.smarteist:autoimageslider:1.4.0")
-
     //image downloader and controller
     implementation("com.squareup.picasso:picasso:2.71828")
-
-    //shimmer effect
-//    implementation 'com.facebook.shimmer:shimmer:0.5.0'
-
-//    //country code
-//    implementation 'com.hbb20:ccp:2.4.5'
-
-//    //chart
-//    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     //Dagger - Hilt
     implementation ("com.google.dagger:hilt-android:2.46.1")
     kapt ("com.google.dagger:hilt-android-compiler:2.46.1")
-    kapt ("androidx.hilt:hilt-compiler:1.0.0")
+    kapt ("androidx.hilt:hilt-compiler:1.1.0")
+    implementation( "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
 
     // define any required OkHttp artifacts without version
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.11.0"))
+//    implementation("com.squareup.okhttp3:okhttp")
+//    implementation("com.squareup.okhttp3:logging-interceptor")
+//    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.11.0"))
 
-    //retrofit
+    //retrofit for networking
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     //jason converter

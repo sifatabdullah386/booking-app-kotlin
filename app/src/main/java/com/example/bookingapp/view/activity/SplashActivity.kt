@@ -21,7 +21,7 @@ class SplashActivity : BaseActivity() {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            sessionManager?.setLogin(true)
+//            sessionManager?.setLogin(false)
             if (sessionManager!!.isLoggedIn) {
                 val intent = Intent(this@SplashActivity, MainActivity::class.java)
                 //intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
